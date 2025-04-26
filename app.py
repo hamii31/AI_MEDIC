@@ -20,7 +20,7 @@ def predict_diabetes(hba1c, glucose):
 
 # Streamlit app code
 def main():
-    st.title("Diabetes Prediction using Random Forest")
+    st.title("Diabetes Prediction")
     
     st.write("Please enter the following information to predict diabetes risk:")
     
