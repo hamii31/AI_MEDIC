@@ -44,5 +44,3 @@ def main():
 # Run the app
 if __name__ == "__main__":
     main()
-
-# streamlit run C:\Users\Hami\source\repos\random_forest_aggregator\random_forest_aggregator\app.py
