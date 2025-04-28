@@ -48,7 +48,7 @@ def predict_pcos(age, bmi, cycle_ir, pregnant, fsh, lh, lhfshr, hip, waist, whr,
 
 # Streamlit app code
 def main():
-    st.title("MEDISAGE - AI Medical Prediction")
+    st.title("AI Medical Prediction")
     
     model_selection = st.radio("Choose what you want to predict:", ("Diabetes", "PCOS"))
     
