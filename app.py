@@ -3,8 +3,8 @@ import joblib
 import streamlit as st
 
 # Load the trained model
-MODEL_FILENAME = 'best_random_forest_model.pkl'
-loaded_model = joblib.load(MODEL_FILENAME)
+DRFM = 'best_diabetes_rf.pkl'
+loaded_model = joblib.load(DRFM)
 
 # Create function for making predictions based on user inputs
 def predict_diabetes(hba1c, glucose):
