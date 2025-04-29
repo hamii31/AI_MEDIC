@@ -65,12 +65,24 @@ def predict_pcos(age, bmi, cycle_ir, pregnant, fsh, lh, lhfshr, hip, waist, whr,
 
 # Streamlit app code
 def main():
-    st.title("AI Medical Prediction")
-    
     # Sidebar for model selection
-    model_selection = st.sidebar.radio("Choose what you want to predict:", ("Diabetes", "PCOS", "Thyroid"))
+    model_selection = st.sidebar.selectbox("Select a prediction model:", ["Home", "Diabetes", "PCOS", "Thyroid"])
     
-    if model_selection == "Diabetes":
+    # Landing page content
+    if model_selection == "Home":
+        st.header("Welcome to AI Medic!")
+        st.write("This app utilizes an advanced AI architecture that combines multiple learning models to assess the user's risk of developing various diseases based on their input.")
+        st.write("Please select a category from the sidebar to get started.")
+        st.write("### Available Predictions:")
+        st.write("- **Diabetes Risk Prediction**: Risk prediction based on HbA1c and blood glucose levels.")
+        st.write("- **PCOS Risk Prediction**: Prediction based on various health parameters.")
+        st.write("- **Thyroid Disease Prediction**: Evaluation based on thyroid function test results.")
+        st.write("This tool is intended for informational purposes only. Please consult a healthcare provider for a proper diagnosis and treatment.")
+        
+        # Optional image
+        # st.image("welcome_image.png", use_container_width=True)  # Uncomment and correct the path if needed
+    
+    elif model_selection == "Diabetes":
         st.write("Please enter the following information to predict diabetes risk:")
         
         # Set all inputs to float type
@@ -86,6 +98,7 @@ def main():
             else:
                 st.markdown("<h3 style='color: green;'>You are not at risk of diabetes.</h3>", unsafe_allow_html=True)
             st.write(f"Confidence: {confidence * 100:.2f}%")
+            st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
             
     elif model_selection == "PCOS":
         st.write("Please enter the following information to predict PCOS risk:")
@@ -132,6 +145,7 @@ def main():
             else:
                 st.markdown("<h3 style='color: green;'>You are not at risk of PCOS.</h3>", unsafe_allow_html=True)
             st.write(f"Confidence: {confidence * 100:.2f}%")
+            st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
             
     elif model_selection == "Thyroid":
         st.write("Please enter the following information to predict thyroid disease risk:")
@@ -156,15 +170,15 @@ def main():
             predicted_class_label = class_labels[prediction]  # Get the predicted class label
             
             if prediction == 1:
-                st.markdown(f"<h3 style='color: green;'>You are not at risk for thyroid disease.</h3>", unsafe_allow_html=True)
+                st.markdown(f"<h3 style='color: green;'>You are not at risk of thyroid disease.</h3>", unsafe_allow_html=True)
             elif prediction == 2:
                 st.markdown(f"<h3 style='color: red;'>You are at risk of Hypothyroidism!</h3>", unsafe_allow_html=True)
             elif prediction == 3:
                 st.markdown(f"<h3 style='color: red;'>You are at risk of Hyperthyroidism!</h3>", unsafe_allow_html=True)
 
             st.write(f"Confidence: {confidence * 100:.2f}%")
-
-    st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
+            st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
+   
 
 # Run the app
 if __name__ == "__main__":
