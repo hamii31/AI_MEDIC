@@ -9,7 +9,7 @@ PCOS_MODEL_FILENAME = 'best_pcos_model_xgboost.pkl'
 diabetes_model = joblib.load(DIABETES_MODEL_FILENAME)
 pcos_model = joblib.load(PCOS_MODEL_FILENAME)
 
-# Create function for making predictions based on user inputs
+# Prediction functions 
 def predict_diabetes(hba1c, glucose):
     custom_input = pd.DataFrame({
         'HbA1c_level': [hba1c],
