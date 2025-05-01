@@ -141,10 +141,10 @@ def main():
         elif model_type == "Thyroid":
             st.write("Please enter the following information to predict thyroid disease risk:")
             T3_Resin_Uptake_Percentage = st.number_input("T3 Resin Uptake Percentage:", min_value=0.0, max_value=1000.0, value=100.0, step=0.1)
-            Total_Serum_Thyroxine_Isotopic = st.number_input("Total Serum Thyroxine Isotopic:", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
-            Total_Serum_Triiodothyronine_Radioimmunoassay = st.number_input("Total Serum Triiodothyronine Radioimmunoassay:", min_value=0.0, max_value=1000.0, value=2.0, step=0.1)
-            Basal_TSH_Radioimmunoassay = st.number_input("Basal TSH Radioimmunoassay", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
-            Max_Absolute_Diff_TSH_TRH_Injection = st.number_input("Max Absolute Diff TSH TRH Injection", min_value=0.0, max_value=1000.0, value=4.0, step=0.1)
+            Total_Serum_Thyroxine_Isotopic = st.number_input("Total Thyroxine (T4):", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
+            Total_Serum_Triiodothyronine_Radioimmunoassay = st.number_input("Total Triiodothyronine (T3):", min_value=0.0, max_value=1000.0, value=2.0, step=0.1)
+            Basal_TSH_Radioimmunoassay = st.number_input("TSH", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
+            Max_Absolute_Diff_TSH_TRH_Injection = st.number_input("TRH Stimulation Test (TSH after TRH injection)", min_value=0.0, max_value=1000.0, value=4.0, step=0.1)
             if st.button("Predict"):
                 prediction, probabilities = predict_thyroid(
                     T3_Resin_Uptake_Percentage,
