@@ -17,7 +17,6 @@ try:
     diabetes_model = joblib.load(DIABETES_MODEL_FILENAME)
     pcos_model = joblib.load(PCOS_MODEL_FILENAME)
     thyroid_model = joblib.load(THYROID_MODEL_FILENAME)
-    # Load the Keras model for pneumonia
     pneumonia_model = tf.keras.models.load_model(PNEUMONIA_MODEL_FILENAME)
 except FileNotFoundError as e:
     st.error(f"Error loading model: {e}. Make sure the model files exist at the specified paths.")
@@ -26,7 +25,7 @@ except Exception as e:
     st.error(f"An error occurred while loading a model: {e}")
     st.stop()
 
-# Prediction functions (existing)
+# Prediction functions 
 def predict_thyroid(T3_Resin_Uptake_Percentage, Total_Serum_Thyroxine_Isotopic, Total_Serum_Triiodothyronine_Radioimmunoassay, Basal_TSH_Radioimmunoassay, Max_Absolute_Diff_TSH_TRH_Injection):
     custom_input = pd.DataFrame({
         'T3_Resin_Uptake_Percentage': [T3_Resin_Uptake_Percentage],
@@ -179,7 +178,7 @@ def main():
             Total_Serum_Triiodothyronine_Radioimmunoassay = st.number_input("Total Serum Triiodothyronine Radioimmunoassay:", min_value=0.0, max_value=1000.0, value=2.0, step=0.1)
             Basal_TSH_Radioimmunoassay = st.number_input("Basal TSH Radioimmunoassay", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
             Max_Absolute_Diff_TSH_TRH_Injection = st.number_input("Max Absolute Diff TSH TRH Injection", min_value=0.0, max_value=1000.0, value=4.0, step=0.1)
-            if st.button("Predict Thyroid"): # Changed button label for clarity
+            if st.button("Predict Thyroid"): 
                 prediction, probabilities = predict_thyroid(
                     T3_Resin_Uptake_Percentage,
                     Total_Serum_Thyroxine_Isotopic,
@@ -205,14 +204,15 @@ def main():
         uploaded_file = st.file_uploader("Choose a chest X-ray image...", type=["jpg", "jpeg", "png"])
 
         if uploaded_file is not None:
-            # Display the uploaded image
-            st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+
+            st.image(uploaded_file, caption="Uploaded Image", use_container_width=True) 
 
             if st.button("Analyze X-ray"):
-                with st.spinner("Analyzing image..."):
+                with st.spinner("Analyzing image... Please wait."):
                     try:
                         predicted_label, confidence, img_display = predict_pneumonia(uploaded_file)
 
+                        st.write("### Prediction:")
                         if predicted_label == 'Pneumonia':
                             st.markdown(f"<h3 style='color: red;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
                         else:
