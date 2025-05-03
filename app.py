@@ -2,17 +2,31 @@ import pandas as pd
 import joblib
 import numpy as np
 import streamlit as st
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+import os
 
 # Load the trained models
-DIABETES_MODEL_FILENAME = 'best_diabetes_rf.pkl'
-PCOS_MODEL_FILENAME = 'best_pcos_model_xgboost.pkl'
-THYROID_MODEL_FILENAME = 'best_logistic_thyroid_model.pkl'
+DIABETES_MODEL_FILENAME = r'best_diabetes_rf.pkl'
+PCOS_MODEL_FILENAME = r'best_pcos_model_xgboost.pkl'
+THYROID_MODEL_FILENAME = r'best_logistic_thyroid_model.pkl'
+PNEUMONIA_MODEL_FILENAME = r"lightweight_pneumonia_cnn.keras"
 
-diabetes_model = joblib.load(DIABETES_MODEL_FILENAME)
-pcos_model = joblib.load(PCOS_MODEL_FILENAME)
-thyroid_model = joblib.load(THYROID_MODEL_FILENAME)
+# Load the models
+try:
+    diabetes_model = joblib.load(DIABETES_MODEL_FILENAME)
+    pcos_model = joblib.load(PCOS_MODEL_FILENAME)
+    thyroid_model = joblib.load(THYROID_MODEL_FILENAME)
+    # Load the Keras model for pneumonia
+    pneumonia_model = tf.keras.models.load_model(PNEUMONIA_MODEL_FILENAME)
+except FileNotFoundError as e:
+    st.error(f"Error loading model: {e}. Make sure the model files exist at the specified paths.")
+    st.stop() # Stop the app if models can't be loaded
+except Exception as e:
+    st.error(f"An error occurred while loading a model: {e}")
+    st.stop()
 
-# Prediction functions
+# Prediction functions (existing)
 def predict_thyroid(T3_Resin_Uptake_Percentage, Total_Serum_Thyroxine_Isotopic, Total_Serum_Triiodothyronine_Radioimmunoassay, Basal_TSH_Radioimmunoassay, Max_Absolute_Diff_TSH_TRH_Injection):
     custom_input = pd.DataFrame({
         'T3_Resin_Uptake_Percentage': [T3_Resin_Uptake_Percentage],
@@ -63,10 +77,28 @@ def predict_pcos(age, bmi, cycle_ir, pregnant, fsh, lh, lhfshr, hip, waist, whr,
     probabilities = pcos_model.predict_proba(custom_input)
     return predictions[0], probabilities[0]
 
+def predict_pneumonia(uploaded_file):
+    img_size = (224, 224)
+    img = image.load_img(uploaded_file, target_size=img_size)
+    img_array = image.img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0) 
+
+    pred_prob = pneumonia_model.predict(img_array)[0][0]
+
+    # The model outputs a probability for the 'opacity' class (assuming binary classification: normal=0, opacity=1)
+    predicted_class_index = (pred_prob > 0.5).astype(int)
+
+    class_labels = ['Normal', 'Pneumonia']
+    predicted_label = class_labels[predicted_class_index]
+
+    # Confidence for the predicted class
+    confidence = pred_prob if predicted_class_index == 1 else (1 - pred_prob)
+
+    return predicted_label, confidence, img # Return the image object for display
+
 # Streamlit app code
 def main():
-   # Main sidebar for model selection
-    main_choice = st.sidebar.selectbox("Select a category:", ["Home", "Endocrinologist"])
+    main_choice = st.sidebar.selectbox("Select a category:", ["Home", "Endocrinologist", "Pulmonologist"])
 
     if main_choice == "Home":
         st.header("Welcome to AI Physician!")
@@ -77,12 +109,14 @@ def main():
         st.write("- **Diabetes Risk Prediction**: Risk prediction based on HbA1c and blood glucose levels.")
         st.write("- **PCOS Risk Prediction**: Prediction based on various health parameters.")
         st.write("- **Thyroid Disease Prediction**: Evaluation based on thyroid function test results.")
+        st.write("##### Pulmonologist:") 
+        st.write("- **Pneumonia X-ray Analysis**: Analyze chest X-ray images for signs of pneumonia.")
         st.write("Please remember, this tool is for informational purposes only. For an accurate diagnosis and personalized medical advice, consult a qualified healthcare professional.")
 
     elif main_choice == "Endocrinologist":
         # Sub-selection for specific model
         model_type = st.sidebar.selectbox("Choose the health condition:", ["Diabetes", "PCOS", "Thyroid"])
-        
+
         if model_type == "Diabetes":
             st.write("Please enter the following information to predict diabetes risk:")
             hba1c = st.number_input("Enter your HbA1c level:", min_value=0.0, max_value=100.0, value=5.0, step=0.1)
@@ -141,11 +175,11 @@ def main():
         elif model_type == "Thyroid":
             st.write("Please enter the following information to predict thyroid disease risk:")
             T3_Resin_Uptake_Percentage = st.number_input("T3 Resin Uptake Percentage:", min_value=0.0, max_value=1000.0, value=100.0, step=0.1)
-            Total_Serum_Thyroxine_Isotopic = st.number_input("Total Thyroxine (T4):", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
-            Total_Serum_Triiodothyronine_Radioimmunoassay = st.number_input("Total Triiodothyronine (T3):", min_value=0.0, max_value=1000.0, value=2.0, step=0.1)
-            Basal_TSH_Radioimmunoassay = st.number_input("TSH", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
-            Max_Absolute_Diff_TSH_TRH_Injection = st.number_input("TRH Stimulation Test (TSH after TRH injection)", min_value=0.0, max_value=1000.0, value=4.0, step=0.1)
-            if st.button("Predict"):
+            Total_Serum_Thyroxine_Isotopic = st.number_input("Total Serum Thyroxine Isotopic:", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
+            Total_Serum_Triiodothyronine_Radioimmunoassay = st.number_input("Total Serum Triiodothyronine Radioimmunoassay:", min_value=0.0, max_value=1000.0, value=2.0, step=0.1)
+            Basal_TSH_Radioimmunoassay = st.number_input("Basal TSH Radioimmunoassay", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
+            Max_Absolute_Diff_TSH_TRH_Injection = st.number_input("Max Absolute Diff TSH TRH Injection", min_value=0.0, max_value=1000.0, value=4.0, step=0.1)
+            if st.button("Predict Thyroid"): # Changed button label for clarity
                 prediction, probabilities = predict_thyroid(
                     T3_Resin_Uptake_Percentage,
                     Total_Serum_Thyroxine_Isotopic,
@@ -163,6 +197,34 @@ def main():
                     st.markdown("<h3 style='color: red;'>You are at risk of Hyperthyroidism!</h3>", unsafe_allow_html=True)
                 st.write(f"Confidence: {confidence * 100:.2f}%")
                 st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
+
+    elif main_choice == "Pulmonologist":
+        st.header("Pulmonologist: Pneumonia X-ray Analysis")
+        st.write("Upload a chest X-ray image to get a prediction for pneumonia.")
+
+        uploaded_file = st.file_uploader("Choose a chest X-ray image...", type=["jpg", "jpeg", "png"])
+
+        if uploaded_file is not None:
+            # Display the uploaded image
+            st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+
+            if st.button("Analyze X-ray"):
+                with st.spinner("Analyzing image..."):
+                    try:
+                        predicted_label, confidence, img_display = predict_pneumonia(uploaded_file)
+
+                        if predicted_label == 'Pneumonia':
+                            st.markdown(f"<h3 style='color: red;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
+                        else:
+                            st.markdown(f"<h3 style='color: green;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
+                        st.write(f"Confidence: {confidence * 100:.2f}%")
+
+                        st.write("Note: This analysis is based on a machine learning model and should not replace a diagnosis from a qualified medical professional.")
+
+                    except Exception as e:
+                        st.error(f"An error occurred during analysis: {e}")
+                        st.write("Please try uploading a valid image file.")
+
 
 # Run the app
 if __name__ == "__main__":
