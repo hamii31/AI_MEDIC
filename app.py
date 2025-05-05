@@ -4,9 +4,8 @@ import numpy as np
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
-import os
 
-# Load the trained models
+# Load the trained model
 DIABETES_MODEL_FILENAME = r'best_diabetes_rf.pkl'
 PCOS_MODEL_FILENAME = r'best_pcos_model_xgboost.pkl'
 THYROID_MODEL_FILENAME = r'best_logistic_thyroid_model.pkl'
