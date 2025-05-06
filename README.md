@@ -22,17 +22,12 @@ This application utilizes two distinct machine learning models to provide predic
     *   `0` (or a low probability value below the threshold, e.g., 0.5) representing "normal".
     *   `1` (or a high probability value above the threshold, e.g., 0.5) representing "opacity" (pneumonia).
     The model outputs a probability score between 0 and 1, which can be thresholded (e.g., at 0.5) for final classification.
-*   **Architecture:** This lightweight CNN utilizes efficient building blocks:
-    *   It replaces standard convolutional layers with **Depthwise Separable Convolutional layers**, which significantly reduces the number of parameters and computations.
-    *   MaxPooling layers are used for spatial downsampling.
-    *   **Global Average Pooling** is used instead of Flatten and dense layers, further reducing parameters and making the model less prone to overfitting.
-    *   A final Dense layer with a sigmoid activation function for binary classification.
 *   **Dataset:** Trained and evaluated on the Chest X-Ray Images (Pneumonia) dataset from Kaggle ([https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)). The dataset is split into training, validation, and testing sets.
 *   **Data Augmentation:** The training data is augmented using techniques like rotation, zoom, horizontal flipping, and shifting to improve the model's robustness.
 *   **Training:** The model is trained using the Adam optimizer and binary cross-entropy loss. Training includes a learning rate scheduler (`ReduceLROnPlateau`) to adjust the learning rate based on validation accuracy.
-*   **Model File:** The trained lightweight model is saved as a Keras file: `pneumonia_model_lightweight.keras`.
-*   **Dependencies:** TensorFlow, Keras, NumPy, Scikit-learn (if you add evaluation functions).
-*   **Usage:** The model was [evaluated](https://youtu.be/YEn74_YTs2Q) using assets from the CheXpert dataset, which were not included in the training data.
+*   **Model File:** The lightweight model is saved as a Keras file: `pneumonia_model_lightweight_512.keras`.
+*   **Dependencies:** TensorFlow, Keras, NumPy, Scikit-learn 
+*   **Usage:** The model was [evaluated](https://youtu.be/YEn74_YTs2Q) using assets from the CheXpert dataset, which were not included in the training data in order to check the generalization of the model.
 
 ### 3. PCOS Prediction XGBoost Model
 
