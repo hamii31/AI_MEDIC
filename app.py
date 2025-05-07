@@ -40,8 +40,8 @@ def download_spacy_model(model_name):
 nlp = None
 try:
     nlp = spacy.load("en_core_web_sm")
-#except OSError:
-    #download_spacy_model("en_core_web_sm")
+except OSError:
+    download_spacy_model("en_core_web_sm")
 except Exception as e:
     st.error(f"An error occurred while loading the spaCy model: {e}")
     st.stop()
