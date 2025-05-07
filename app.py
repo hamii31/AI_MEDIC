@@ -3,7 +3,7 @@ import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 import spacy
-
+import subprocess
 
 PNEUMONIA_MODEL_FILENAME = r"lightweight_pneumonia_cnn_512.keras"
 
