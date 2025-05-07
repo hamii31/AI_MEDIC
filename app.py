@@ -197,33 +197,35 @@ def main():
                 st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
 
     elif main_choice == "Pulmonologist":
-        st.header("Pulmonologist: Pneumonia X-ray Analysis")
-        st.write("Upload a chest X-ray image to get a prediction for pneumonia.")
-
-        uploaded_file = st.file_uploader("Choose a chest X-ray image...", type=["jpg", "jpeg", "png"])
-
-        if uploaded_file is not None:
-
-            st.image(uploaded_file, caption="Uploaded Image", use_container_width=True) 
-
-            if st.button("Analyze X-ray"):
-                with st.spinner("Analyzing image... Please wait."):
-                    try:
-                        predicted_label, confidence, img_display = predict_pneumonia(uploaded_file)
-
-                        st.write("### Prediction:")
-                        if predicted_label == 'Pneumonia':
-                            st.markdown(f"<h3 style='color: red;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
-                        else:
-                            st.markdown(f"<h3 style='color: green;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
-                        st.write(f"Confidence: {confidence * 100:.2f}%")
-
-                        st.write("Note: This analysis is based on a machine learning model and should not replace a diagnosis from a qualified medical professional.")
-
-                    except Exception as e:
-                        st.error(f"An error occurred during analysis: {e}")
-                        st.write("Please try uploading a valid image file.")
-
+        model_type = st.sidebar.selectbox("Choose the analysis type:", ["Pneumonia X-ray Analysis"])
+        
+        if model_type == "Pneumonia X-ray Analysis":
+            st.header("Pulmonologist: Pneumonia X-ray Analysis")
+            st.write("Upload a chest X-ray image to get a prediction for pneumonia.")
+    
+            uploaded_file = st.file_uploader("Choose a chest X-ray image...", type=["jpg", "jpeg", "png"])
+    
+            if uploaded_file is not None:
+    
+                st.image(uploaded_file, caption="Uploaded Image", use_container_width=True) 
+    
+                if st.button("Analyze X-ray"):
+                    with st.spinner("Analyzing image... Please wait."):
+                        try:
+                            predicted_label, confidence, img_display = predict_pneumonia(uploaded_file)
+    
+                            st.write("### Prediction:")
+                            if predicted_label == 'Pneumonia':
+                                st.markdown(f"<h3 style='color: red;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
+                            else:
+                                st.markdown(f"<h3 style='color: green;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
+                            st.write(f"Confidence: {confidence * 100:.2f}%")
+    
+                            st.write("Note: This analysis is based on a machine learning model and should not replace a diagnosis from a qualified medical professional.")
+    
+                        except Exception as e:
+                            st.error(f"An error occurred during analysis: {e}")
+                            st.write("Please try uploading a valid image file.")
 
 # Run the app
 if __name__ == "__main__":
