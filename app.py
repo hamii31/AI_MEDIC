@@ -47,15 +47,18 @@ if not os.path.exists(meta_json_path):
         st.error(f"An unexpected error occurred during extraction: {type(e).__name__} - {e}")
         st.stop()
 
-# Load the model from the dedicated subdirectory
 try:
-    nlp = spacy.load(model_extract_path) # Load from the dedicated subdirectory
+    # Define the actual path to the model directory inside the extracted directory
+    actual_model_path = os.path.join(model_extract_path, "en_core_web_sm")
+    nlp = spacy.load(actual_model_path)
+    st.success("Spacy model loaded successfully!") # Add a success message
 except OSError:
-    st.error(f"Error loading Spacy model from: {model_extract_path}. Make sure the model was extracted correctly.")
+    st.error(f"Error loading Spacy model from: {actual_model_path}. Make sure the model was extracted correctly and contains the necessary files.")
+    # Debugging: List contents of the actual model directory
     try:
-        st.error(f"Contents of the extraction directory ({model_extract_path}): {os.listdir(model_extract_path)}")
+        st.error(f"Contents of the actual model directory ({actual_model_path}): {os.listdir(actual_model_path)}")
     except FileNotFoundError:
-         st.error(f"Extraction directory not found: {model_extract_path}")
+         st.error(f"Actual model directory not found: {actual_model_path}")
     st.stop()
 
 
