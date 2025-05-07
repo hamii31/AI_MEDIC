@@ -25,7 +25,7 @@ def download_spacy_model(model_name):
     except OSError:
         st.warning(f"SpaCy model '{model_name}' not found. Downloading...")
         try:
-            subprocess.check_call(["python", "-m", "spacy", "download", model_name])
+            subprocess.check_call(["python", " -m ", "spacy ", "download ", model_name])
             st.success(f"Successfully downloaded spaCy model '{model_name}'. Please refresh the app.")
             st.stop() # Stop the app so Streamlit Cloud can restart with the downloaded model
         except subprocess.CalledProcessError as e:
