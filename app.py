@@ -19,21 +19,7 @@ except Exception as e:
  
 
 # Function to download spaCy model
-def download_spacy_model(model_name):
-    try:
-        spacy.load(model_name)
-    except OSError:
-        st.warning(f"SpaCy model '{model_name}' not found. Downloading...")
-        try:
-            subprocess.check_call(["python", "-m", "spacy", "download", model_name])
-            st.success(f"Successfully downloaded spaCy model '{model_name}'. Please refresh the app.")
-            st.stop() # Stop the app so Streamlit Cloud can restart with the downloaded model
-        except subprocess.CalledProcessError as e:
-            st.error(f"Error downloading spaCy model '{model_name}': {e}")
-            st.stop()
-        except Exception as e:
-            st.error(f"An unexpected error occurred during spaCy model download: {e}")
-            st.stop()
+
 
 # Load the small English spaCy model
 # This happens only once when the app starts
