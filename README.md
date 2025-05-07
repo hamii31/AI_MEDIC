@@ -27,7 +27,6 @@ This application utilizes two distinct machine learning models to provide predic
 *   **Training:** The model is trained using the Adam optimizer and binary cross-entropy loss. Training includes a learning rate scheduler (`ReduceLROnPlateau`) to adjust the learning rate based on validation accuracy. I had to reduce the model's size so it can be deployed through GitHub, meaning that I had to bring its accuracy back to what it was, which I successfully did. 
 *   **Model File:** The lightweight model is saved as a Keras file: `pneumonia_model_lightweight_512.keras`.
 *   **Dependencies:** TensorFlow, Keras, NumPy, Scikit-learn 
-*   **Usage:** The model was [evaluated](https://youtu.be/YEn74_YTs2Q) using assets from the CheXpert dataset, which were not included in the training data in order to check the generalization of the model.
 
 ### 3. PCOS Prediction XGBoost Model
 
