@@ -19,35 +19,38 @@ except Exception as e:
     st.stop()
  
 # Define the paths relative to the script location
-# Assuming the zip file is named en_core_web_sm.zip and is in the same directory
 model_zip_filename = "en_core_web_sm.zip"
 model_zip_path = os.path.join(os.path.dirname(__file__), model_zip_filename)
 
-# The directory name after unzipping (it will be created in the same directory)
-model_extract_dir_name = "en_core_web_sm"
-model_extract_path = os.path.join(os.path.dirname(__file__), model_extract_dir_name)
+# The directory where the model files will be extracted (same as script dir)
+model_extract_path = os.path.dirname(__file__) # Load from the script directory
 
-# Check if the model directory exists
-if not os.path.exists(model_extract_path):
+# Check if a key file exists to indicate extraction (e.g., meta.json)
+# This is a more robust check than just the directory
+meta_json_path = os.path.join(model_extract_path, "meta.json")
+
+if not os.path.exists(meta_json_path): # Check for a file that should be extracted
     st.info("Extracting Spacy model...")
     try:
         with zipfile.ZipFile(model_zip_path, 'r') as zip_ref:
             # Extract to the directory where the script is located
-            zip_ref.extractall(os.path.dirname(__file__))
+            zip_ref.extractall(model_extract_path) # Extract to the script directory
         st.success("Spacy model extracted successfully!")
     except FileNotFoundError:
         st.error(f"Error: Spacy model zip file not found at {model_zip_path}")
-        st.stop() # Stop the app if the zip file is not found
+        st.stop()
     except Exception as e:
         st.error(f"Error extracting Spacy model: {e}")
-        st.stop() # Stop the app if extraction fails
+        st.stop()
 
-# Load the model from the extracted path
+# Load the model from the extracted path (the script directory)
 try:
     nlp = spacy.load(model_extract_path)
 except OSError:
     st.error(f"Error loading Spacy model from: {model_extract_path}. Make sure the model was extracted correctly.")
-    st.stop() # Stop the app execution if the model can't be loaded
+    st.error(f"Contents of the extraction directory ({model_extract_path}): {os.listdir(model_extract_path)}") # Debugging line
+    st.stop()
+
 
 
 # --- Medical Knowledge Base for Chatbot ---
