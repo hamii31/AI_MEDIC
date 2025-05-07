@@ -29,18 +29,20 @@ model_extract_path = os.path.dirname(__file__) # Load from the script directory
 # This is a more robust check than just the directory
 meta_json_path = os.path.join(model_extract_path, "meta.json")
 
-if not os.path.exists(meta_json_path): # Check for a file that should be extracted
+if not os.path.exists(meta_json_path):
     st.info("Extracting Spacy model...")
     try:
         with zipfile.ZipFile(model_zip_path, 'r') as zip_ref:
-            # Extract to the directory where the script is located
-            zip_ref.extractall(model_extract_path) # Extract to the script directory
+            zip_ref.extractall(model_extract_path)
         st.success("Spacy model extracted successfully!")
     except FileNotFoundError:
-        st.error(f"Error: Spacy model zip file not found at {model_zip_path}")
+        st.error(f"Error: Spacy model zip file not found at {model_zip_path}. Make sure it's in your GitHub repository.")
+        st.stop()
+    except zipfile.BadZipFile:
+        st.error(f"Error: The zip file at {model_zip_path} is corrupted or not a valid zip file.")
         st.stop()
     except Exception as e:
-        st.error(f"Error extracting Spacy model: {e}")
+        st.error(f"An unexpected error occurred during extraction: {type(e).__name__} - {e}")
         st.stop()
 
 # Load the model from the extracted path (the script directory)
