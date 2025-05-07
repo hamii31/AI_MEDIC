@@ -22,17 +22,19 @@ except Exception as e:
 model_zip_filename = "en_core_web_sm.zip"
 model_zip_path = os.path.join(os.path.dirname(__file__), model_zip_filename)
 
-# The directory where the model files will be extracted (same as script dir)
-model_extract_path = os.path.dirname(__file__) # Load from the script directory
+# The dedicated directory where the model files will be extracted
+extracted_model_dir = "extracted_spacy_model"
+model_extract_path = os.path.join(os.path.dirname(__file__), extracted_model_dir)
 
-# Check if a key file exists to indicate extraction (e.g., meta.json)
-# This is a more robust check than just the directory
-meta_json_path = os.path.join(model_extract_path, "meta.json")
+meta_json_path = os.path.join(model_extract_path, "meta.json") # Assuming files are directly in the zip
 
 if not os.path.exists(meta_json_path):
-    st.info("Extracting Spacy model...")
+    st.info(f"Extracting Spacy model to {extracted_model_dir}...")
     try:
+        # Create the target directory if it doesn't exist
+        os.makedirs(model_extract_path, exist_ok=True)
         with zipfile.ZipFile(model_zip_path, 'r') as zip_ref:
+            # Extract into the dedicated subdirectory
             zip_ref.extractall(model_extract_path)
         st.success("Spacy model extracted successfully!")
     except FileNotFoundError:
@@ -45,12 +47,15 @@ if not os.path.exists(meta_json_path):
         st.error(f"An unexpected error occurred during extraction: {type(e).__name__} - {e}")
         st.stop()
 
-# Load the model from the extracted path (the script directory)
+# Load the model from the dedicated subdirectory
 try:
-    nlp = spacy.load(model_extract_path)
+    nlp = spacy.load(model_extract_path) # Load from the dedicated subdirectory
 except OSError:
     st.error(f"Error loading Spacy model from: {model_extract_path}. Make sure the model was extracted correctly.")
-    st.error(f"Contents of the extraction directory ({model_extract_path}): {os.listdir(model_extract_path)}") # Debugging line
+    try:
+        st.error(f"Contents of the extraction directory ({model_extract_path}): {os.listdir(model_extract_path)}")
+    except FileNotFoundError:
+         st.error(f"Extraction directory not found: {model_extract_path}")
     st.stop()
 
 
