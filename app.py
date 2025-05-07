@@ -107,7 +107,7 @@ def main():
         st.write("- **Diabetes Risk Prediction**: Risk prediction based on HbA1c and blood glucose levels.")
         st.write("- **PCOS Risk Prediction**: Prediction based on various health parameters.")
         st.write("- **Thyroid Disease Prediction**: Evaluation based on thyroid function test results.")
-        st.write("##### Pulmonologist:") 
+        st.write("##### Radiologist:") 
         st.write("- **Pneumonia X-ray Analysis**: Analyze chest X-ray images for signs of pneumonia.")
         st.write("Please remember, this tool is for informational purposes only. For an accurate diagnosis and personalized medical advice, consult a qualified healthcare professional.")
 
@@ -196,7 +196,7 @@ def main():
                 st.write(f"Confidence: {confidence * 100:.2f}%")
                 st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
 
-    elif main_choice == "Pulmonologist":
+    elif main_choice == "Radiologist":
         model_type = st.sidebar.selectbox("Choose the analysis type:", ["Pneumonia X-ray Analysis"])
         
         if model_type == "Pneumonia X-ray Analysis":
