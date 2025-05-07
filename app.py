@@ -56,7 +56,14 @@ except OSError:
     st.error(f"Error loading Spacy model from: {actual_model_path}. Make sure the model was extracted correctly and contains the necessary files.")
     # Debugging: List contents of the actual model directory
     try:
-        st.error(f"Contents of the actual model directory ({actual_model_path}): {os.listdir(actual_model_path)}")
+        contents = os.listdir(actual_model_path)
+        st.error(f"Contents of {actual_model_path}: {contents}")
+    except NotADirectoryError:
+        st.error(f"{actual_model_path} exists but is not a directory.")
+    except FileNotFoundError:
+        st.error(f"{actual_model_path} does not exist.")
+    except Exception as e:
+        st.error(f"Error listing {actual_model_path}: {type(e).__name__} - {e}")
     except FileNotFoundError:
          st.error(f"Actual model directory not found: {actual_model_path}")
     st.stop()
