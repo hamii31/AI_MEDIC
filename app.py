@@ -1,21 +1,14 @@
-import pandas as pd
-import joblib
 import numpy as np
 import streamlit as st
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
+import spacy
 
-# Load the trained model
-DIABETES_MODEL_FILENAME = r'best_diabetes_rf.pkl'
-PCOS_MODEL_FILENAME = r'best_pcos_model_xgboost.pkl'
-THYROID_MODEL_FILENAME = r'best_logistic_thyroid_model.pkl'
+
 PNEUMONIA_MODEL_FILENAME = r"lightweight_pneumonia_cnn_512.keras"
 
 # Load the models
 try:
-    diabetes_model = joblib.load(DIABETES_MODEL_FILENAME)
-    pcos_model = joblib.load(PCOS_MODEL_FILENAME)
-    thyroid_model = joblib.load(THYROID_MODEL_FILENAME)
     pneumonia_model = tf.keras.models.load_model(PNEUMONIA_MODEL_FILENAME)
 except FileNotFoundError as e:
     st.error(f"Error loading model: {e}. Make sure the model files exist at the specified paths.")
@@ -23,63 +16,65 @@ except FileNotFoundError as e:
 except Exception as e:
     st.error(f"An error occurred while loading a model: {e}")
     st.stop()
+ 
 
-# Prediction functions 
-def predict_thyroid(T3_Resin_Uptake_Percentage, Total_Serum_Thyroxine_Isotopic, Total_Serum_Triiodothyronine_Radioimmunoassay, Basal_TSH_Radioimmunoassay, Max_Absolute_Diff_TSH_TRH_Injection):
-    custom_input = pd.DataFrame({
-        'T3_Resin_Uptake_Percentage': [T3_Resin_Uptake_Percentage],
-        'Total_Serum_Thyroxine_Isotopic': [Total_Serum_Thyroxine_Isotopic],
-        'Total_Serum_Triiodothyronine_Radioimmunoassay': [Total_Serum_Triiodothyronine_Radioimmunoassay],
-        'Basal_TSH_Radioimmunoassay': [Basal_TSH_Radioimmunoassay],
-        'Max_Absolute_Diff_TSH_TRH_Injection': [Max_Absolute_Diff_TSH_TRH_Injection]
-    })
-    predictions = thyroid_model.predict(custom_input)
-    probabilities = thyroid_model.predict_proba(custom_input)
-    return predictions[0], probabilities[0]
+# Load the small English spaCy model
+# This happens only once when the app starts
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    st.error("SpaCy model 'en_core_web_sm' not found. Please run 'python -m spacy download en_core_web_sm' in your terminal.")
+    st.stop() # Stop the app if the model isn't available
 
-def predict_diabetes(hba1c, glucose):
-    custom_input = pd.DataFrame({
-        'HbA1c_level': [hba1c],
-        'blood_glucose_level': [glucose]
-    })
-    predictions = diabetes_model.predict(custom_input)
-    probabilities = diabetes_model.predict_proba(custom_input)
-    return predictions[0], probabilities[0]
+# --- Medical Knowledge Base for Chatbot ---
+symptoms_list = [
+    "fever", "cough", "sore throat", "headache", "fatigue",
+    "shortness of breath", "chest pain", "nausea", "vomiting",
+    "diarrhea", "abdominal pain", "rash", "dizziness", "loss of taste", "loss of smell",
+    "increased thirst", "frequent urination", "unexplained weight loss", "blurred vision",
+    "weight gain", "weight loss", "hair loss", "dry skin", "feeling cold", "feeling hot", "palpitations",
+    "irregular periods", "acne", "excess hair growth", "weight gain (especially around the middle)"
+]
 
-def predict_pcos(age, bmi, cycle_ir, pregnant, fsh, lh, lhfshr, hip, waist, whr, tsh, amh, prl, rbs, weight_gain, hair_growth, skin_darkening, pimples, fast_food, l_follicle_count, r_follicle_count, endometrium_mm):
-    custom_input = pd.DataFrame({
-        'Age (yrs)': [age],
-        'BMI': [bmi],
-        'Cycle(R/I)': [cycle_ir],
-        'Pregnant(Y/N)': [pregnant],
-        'FSH(mIU/mL)': [fsh],
-        'LH(mIU/mL)': [lh],
-        'LHFSHR': [lhfshr],
-        'Hip(inch)': [hip],
-        'Waist(inch)': [waist],
-        'WHR': [whr],
-        'TSH': [tsh],
-        'AMH': [amh],
-        'PRL': [prl],
-        'RBS': [rbs],
-        'Weight gain': [weight_gain],
-        'Hair Growth': [hair_growth],
-        'Skin Darkening': [skin_darkening],
-        'Pimples': [pimples],
-        'Fast food': [fast_food],
-        'L Follicle Count': [l_follicle_count],
-        'R Follicle Count': [r_follicle_count],
-        'Endometrium (mm)': [endometrium_mm]
-    })
-    predictions = pcos_model.predict(custom_input)
-    probabilities = pcos_model.predict_proba(custom_input)
-    return predictions[0], probabilities[0]
+symptom_condition_mapping = {
+    "fever": ["flu", "common cold", "infection"],
+    "cough": ["flu", "common cold", "bronchitis"],
+    "sore throat": ["common cold", "strep throat"],
+    "headache": ["tension headache", "migraine", "flu"],
+    "shortness of breath": ["asthma", "pneumonia", "anxiety"],
+    "chest pain": ["heart attack (seek immediate medical help!)", "anxiety", "muscle strain"],
+    "increased thirst": ["diabetes"],
+    "frequent urination": ["diabetes"],
+    "unexplained weight loss": ["diabetes", "hyperthyroidism"],
+    "blurred vision": ["diabetes"],
+    "weight gain": ["hypothyroidism", "PCOS"],
+    "weight loss": ["hyperthyroidism"],
+    "hair loss": ["hypothyroidism", "PCOS"],
+    "dry skin": ["hypothyroidism"],
+    "feeling cold": ["hypothyroidism"],
+    "feeling hot": ["hyperthyroidism"],
+    "palpitations": ["hyperthyroidism"],
+    "irregular periods": ["PCOS"],
+    "acne": ["PCOS"],
+    "excess hair growth": ["PCOS"],
+}
+
+lab_tests = {
+    "fasting blood glucose": {"unit": "mg/dL", "range": (70, 99), "condition": "diabetes"},
+    "hba1c": {"unit": "%", "range": (4.0, 5.6), "condition": "diabetes"},
+    "tsh": {"unit": "mIU/L", "range": (0.4, 4.0), "condition": "thyroid"},
+    "free t4": {"unit": "ng/dL", "range": (0.8, 1.8), "condition": "thyroid"},
+    "testosterone": {"unit": "ng/dL", "range": (15, 70), "condition": "pcos"},
+    "lh": {"unit": "mIU/mL", "range": (2, 10), "condition": "pcos"},
+    "fsh": {"unit": "mIU/mL", "range": (2, 10), "condition": "pcos"},
+}
+
 
 def predict_pneumonia(uploaded_file):
     img_size = (224, 224)
     img = image.load_img(uploaded_file, target_size=img_size)
     img_array = image.img_to_array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0) 
+    img_array = np.expand_dims(img_array, axis=0)
 
     pred_prob = pneumonia_model.predict(img_array)[0][0]
 
@@ -96,133 +91,164 @@ def predict_pneumonia(uploaded_file):
 
 # Streamlit app code
 def main():
-    main_choice = st.sidebar.selectbox("Select a category:", ["Home", "Endocrinologist", "Radiologist"])
+    st.sidebar.title("Navigation")
+    main_choice = st.sidebar.selectbox("Select a category:", ["General AI", "Radiologist"])
 
-    if main_choice == "Home":
-        st.header("Welcome to AI Physician!")
-        st.write("This app utilizes advanced learning algorithms to evaluate your health risk factors based on your inputs. ")
-        st.write("Please select a specialist from the sidebar to get started.")
-        st.write("### Available Specialists:")
-        st.write("##### Endocrinologist:")
-        st.write("- **Diabetes Risk Prediction**: Risk prediction based on HbA1c and blood glucose levels.")
-        st.write("- **PCOS Risk Prediction**: Prediction based on various health parameters.")
-        st.write("- **Thyroid Disease Prediction**: Evaluation based on thyroid function test results.")
-        st.write("##### Radiologist:") 
-        st.write("- **Pneumonia X-ray Analysis**: Analyze chest X-ray images for signs of pneumonia.")
-        st.write("Please remember, this tool is for informational purposes only. For an accurate diagnosis and personalized medical advice, consult a qualified healthcare professional.")
+    if main_choice == "General AI":
+        st.header("Welcome to the AI Physician! (Informational)")
+        st.warning("""
+        Disclaimer: This chatbot is for informational purposes only and is NOT a substitute for professional medical advice, diagnosis, or treatment.
+        It provides basic information based on common symptoms and generalized lab ranges.
+        **Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition or the interpretation of your lab results.**
+        If you are experiencing a medical emergency, call your local emergency number immediately.
+        """)
 
-    elif main_choice == "Endocrinologist":
-        # Sub-selection for specific model
-        model_type = st.sidebar.selectbox("Choose the health condition:", ["Diabetes", "PCOS", "Thyroid"])
+        st.write("Describe your symptoms or provide lab results, or use the sidebar to access specific models.")
 
-        if model_type == "Diabetes":
-            st.write("Please enter the following information to predict diabetes risk:")
-            hba1c = st.number_input("Enter your HbA1c level:", min_value=0.0, max_value=100.0, value=5.0, step=0.1)
-            glucose = st.number_input("Enter your blood glucose level:", min_value=0.0, max_value=1000.0, value=140.0, step=1.0)
-            if st.button("Predict Diabetes"):
-                prediction, probabilities = predict_diabetes(hba1c, glucose)
-                confidence = probabilities[prediction]
-                if prediction == 1:
-                    st.markdown("<h3 style='color: red;'>You are at risk of diabetes!</h3>", unsafe_allow_html=True)
+        # --- Chatbot Logic ---
+        # Initialize chatbot session state
+        if 'messages' not in st.session_state:
+            st.session_state.messages = []
+        if 'extracted_symptoms' not in st.session_state:
+            st.session_state.extracted_symptoms = []
+        if 'extracted_lab_results' not in st.session_state:
+            st.session_state.extracted_lab_results = {}
+
+
+        # Display conversation history
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+        # Get user input for chatbot
+        user_input = st.chat_input("Describe your symptoms or provide lab results (e.g., 'I have a fever and cough', 'my fasting glucose is 110 mg/dL', 'TSH 5.5')")
+
+        if user_input:
+            # Add user message to history
+            st.session_state.messages.append({"role": "user", "content": user_input})
+            with st.chat_message("user"):
+                st.markdown(user_input)
+
+            # --- NLP Processing with spaCy ---
+            doc = nlp(user_input)
+
+            # --- Symptom Extraction (Using spaCy and Keyword Matching) ---
+            extracted_symptoms = []
+            user_text_lower = user_input.lower()
+
+            for symptom in symptoms_list:
+                if symptom in user_text_lower:
+                    extracted_symptoms.append(symptom)
+
+            st.session_state.extracted_symptoms = extracted_symptoms
+
+            # --- Lab Result Extraction (Using spaCy and Pattern Matching) ---
+            extracted_lab_results = {}
+
+            for i, token in enumerate(doc):
+                token_text_lower = token.text.lower()
+                for test_name, test_info in lab_tests.items():
+                    if test_name in token_text_lower:
+                        for j in range(i + 1, min(i + 5, len(doc))):
+                            next_token = doc[j]
+                            if next_token.like_num:
+                                try:
+                                    value = float(next_token.text)
+                                    extracted_lab_results[test_name] = {"value": value, "unit": test_info["unit"], "range": test_info["range"], "condition": test_info["condition"]}
+                                    break
+                                except ValueError:
+                                    pass
+
+            st.session_state.extracted_lab_results = extracted_lab_results
+
+            # --- Generate Chatbot Response ---
+            response_parts = []
+
+            if extracted_symptoms:
+                response_parts.append("Based on your description, I identified the following potential symptoms: " + ", ".join(extracted_symptoms) + ".")
+
+                potential_conditions_from_symptoms = set()
+                for symptom in extracted_symptoms:
+                    if symptom in symptom_condition_mapping:
+                        potential_conditions_from_symptoms.update(symptom_condition_mapping[symptom])
+
+                if potential_conditions_from_symptoms:
+                    response_parts.append("These symptoms could be associated with conditions such as: " + ", ".join(list(potential_conditions_from_symptoms)) + ".")
                 else:
-                    st.markdown("<h3 style='color: green;'>You are not at risk of diabetes.</h3>", unsafe_allow_html=True)
-                st.write(f"Confidence: {confidence * 100:.2f}%")
-                st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
+                    response_parts.append("I don't have specific information about conditions directly linked to these symptoms in my current knowledge base.")
 
-        elif model_type == "PCOS":
-            st.write("Please enter the following information to predict PCOS risk:")
-            age = st.number_input("Age:", min_value=10, max_value=100, value=30, step=1)
-            bmi = st.number_input("BMI:", min_value=10.0, max_value=100.0, value=25.0, step=0.1)
-            cycle_ir = st.checkbox("Irregular Cycle", value=False)
-            pregnant = st.checkbox("Currently Pregnant", value=False)
-            fsh = st.number_input("FSH (mIU/mL):", min_value=0.0, max_value=1000.0, value=14.0, step=0.1)
-            lh = st.number_input("LH (mIU/mL):", min_value=0.0, max_value=1000.0, value=7.0, step=0.1)
-            lhfshr = lh / fsh if fsh != 0 else 0
-            hip = st.number_input("Hip (inch):", min_value=0.0, max_value=1000.0, value=38.0, step=0.1)
-            waist = st.number_input("Waist (inch):", min_value=0.0, max_value=1000.0, value=33.0, step=0.1)
-            whr = waist / hip if hip != 0 else 0
-            tsh = st.number_input("TSH:", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
-            amh = st.number_input("AMH:", min_value=0.0, max_value=1000.0, value=5.0, step=0.1)
-            prl = st.number_input("Prolactin (PRL):", min_value=0.0, max_value=1000.0, value=25.0, step=0.1)
-            rbs = st.number_input("Random Blood Sugar (RBS):", min_value=0.0, max_value=1000.0, value=100.0, step=0.1)
-            weight_gain = st.checkbox("Weight Gain", value=False)
-            hair_growth = st.checkbox("Hair Growth", value=False)
-            skin_darkening = st.checkbox("Skin Darkening", value=False)
-            pimples = st.checkbox("Pimples", value=False)
-            fast_food = st.checkbox("Fast Food Consumption", value=False)
-            l_follicle_count = st.number_input("L Follicle Count:", min_value=0, max_value=1000, value=6, step=1)
-            r_follicle_count = st.number_input("R Follicle Count:", min_value=0, max_value=100, value=6, step=1)
-            endometrium_mm = st.number_input("Endometrium (mm):", min_value=0, max_value=100, value=8, step=1)
-            if st.button("Predict PCOS"):
-                prediction, probabilities = predict_pcos(
-                    age, bmi, int(cycle_ir), int(pregnant),
-                    fsh, lh, lhfshr, hip, waist, whr,
-                    tsh, amh, prl, rbs, int(weight_gain),
-                    int(hair_growth), int(skin_darkening),
-                    int(pimples), int(fast_food),
-                    l_follicle_count, r_follicle_count, endometrium_mm
-                )
-                confidence = probabilities[prediction]
-                if prediction == 1:
-                    st.markdown("<h3 style='color: red;'>You are at risk of PCOS!</h3>", unsafe_allow_html=True)
-                else:
-                    st.markdown("<h3 style='color: green;'>You are not at risk of PCOS.</h3>", unsafe_allow_html=True)
-                st.write(f"Confidence: {confidence * 100:.2f}%")
-                st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
+            if extracted_lab_results:
+                response_parts.append("\nBased on the lab results you provided:")
+                for test_name, result_info in extracted_lab_results.items():
+                    value = result_info["value"]
+                    unit = result_info["unit"]
+                    lower_bound, upper_bound = result_info["range"]
+                    condition_area = result_info["condition"]
 
-        elif model_type == "Thyroid":
-            st.write("Please enter the following information to predict thyroid disease risk:")
-            T3_Resin_Uptake_Percentage = st.number_input("T3 Resin Uptake Percentage:", min_value=0.0, max_value=1000.0, value=100.0, step=0.1)
-            Total_Serum_Thyroxine_Isotopic = st.number_input("Total Serum Thyroxine Isotopic:", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
-            Total_Serum_Triiodothyronine_Radioimmunoassay = st.number_input("Total Serum Triiodothyronine Radioimmunoassay:", min_value=0.0, max_value=1000.0, value=2.0, step=0.1)
-            Basal_TSH_Radioimmunoassay = st.number_input("Basal TSH Radioimmunoassay", min_value=0.0, max_value=1000.0, value=3.0, step=0.1)
-            Max_Absolute_Diff_TSH_TRH_Injection = st.number_input("Max Absolute Diff TSH TRH Injection", min_value=0.0, max_value=1000.0, value=4.0, step=0.1)
-            if st.button("Predict Thyroid"): 
-                prediction, probabilities = predict_thyroid(
-                    T3_Resin_Uptake_Percentage,
-                    Total_Serum_Thyroxine_Isotopic,
-                    Total_Serum_Triiodothyronine_Radioimmunoassay,
-                    Basal_TSH_Radioimmunoassay,
-                    Max_Absolute_Diff_TSH_TRH_Injection
-                )
-                confidence = np.max(probabilities)
-                predicted_class_label = prediction
-                if prediction == 1:
-                    st.markdown("<h3 style='color: green;'>You are not at risk of thyroid disease.</h3>", unsafe_allow_html=True)
-                elif prediction == 2:
-                    st.markdown("<h3 style='color: red;'>You are at risk of Hypothyroidism!</h3>", unsafe_allow_html=True)
-                elif prediction == 3:
-                    st.markdown("<h3 style='color: red;'>You are at risk of Hyperthyroidism!</h3>", unsafe_allow_html=True)
-                st.write(f"Confidence: {confidence * 100:.2f}%")
-                st.write("Note: This prediction is based on machine learning models trained on specific data. Consult a healthcare provider for a proper diagnosis.")
+                    interpretation = "within the typical range"
+                    if value < lower_bound:
+                        interpretation = "below the typical range"
+                    elif value > upper_bound:
+                        interpretation = "above the typical range"
+
+                    response_parts.append(f"- Your **{test_name.capitalize()}** is **{value} {unit}**, which is **{interpretation}** for a general range. This test is relevant to **{condition_area.capitalize()}**.")
+
+                response_parts.append("\n**Important Note on Lab Results:**")
+                response_parts.append("The reference ranges I use are general. Your lab report will have specific ranges that may differ. The interpretation of lab results is complex and depends on many factors, including your individual health history and other lab values.")
+                response_parts.append("**Only a healthcare professional can accurately interpret your lab results in the context of your overall health.**")
+
+
+            if not extracted_symptoms and not extracted_lab_results:
+                response_parts.append("Thank you for sharing. I couldn't identify any common symptoms or relevant lab results from my current knowledge base in your description.")
+
+            response = "\n\n".join(response_parts)
+
+            # Add final disclaimers for the chatbot response
+            if extracted_symptoms or extracted_lab_results:
+                response += "\n\n"
+                if extracted_symptoms and extracted_lab_results:
+                     response += "**Remember, this analysis is based on limited information and general knowledge. It is NOT a diagnosis.**"
+                elif extracted_symptoms:
+                    response += "**Remember, this symptom analysis is based on limited information. It is NOT a diagnosis.**"
+                elif extracted_lab_results:
+                     response += "**Remember, this lab analysis is based on limited information and general ranges. It is NOT a diagnosis.**"
+
+                response += "\n**Always consult a healthcare professional for proper evaluation, diagnosis, and treatment.**"
+
+
+            # Add chatbot response to history
+            st.session_state.messages.append({"role": "assistant", "content": response})
+            with st.chat_message("assistant"):
+                st.markdown(response)
 
     elif main_choice == "Radiologist":
-        model_type = st.sidebar.selectbox("Choose the analysis type:", ["Pneumonia X-ray Analysis"])
-        
+        st.header("Radiologist: Image Analysis")
+        model_type = st.selectbox("Choose the analysis type:", ["Pneumonia X-ray Analysis"])
+
         if model_type == "Pneumonia X-ray Analysis":
-            st.header("Pulmonologist: Pneumonia X-ray Analysis")
+            st.subheader("Pneumonia X-ray Analysis")
             st.write("Upload a chest X-ray image to get a prediction for pneumonia.")
-    
+
             uploaded_file = st.file_uploader("Choose a chest X-ray image...", type=["jpg", "jpeg", "png"])
-    
+
             if uploaded_file is not None:
-    
-                st.image(uploaded_file, caption="Uploaded Image", use_container_width=True) 
-    
+
+                st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+
                 if st.button("Analyze X-ray"):
                     with st.spinner("Analyzing image... Please wait."):
                         try:
                             predicted_label, confidence, img_display = predict_pneumonia(uploaded_file)
-    
+
                             st.write("### Prediction:")
                             if predicted_label == 'Pneumonia':
                                 st.markdown(f"<h3 style='color: red;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
                             else:
                                 st.markdown(f"<h3 style='color: green;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
                             st.write(f"Confidence: {confidence * 100:.2f}%")
-    
+
                             st.write("Note: This analysis is based on a machine learning model and should not replace a diagnosis from a qualified medical professional.")
-    
+
                         except Exception as e:
                             st.error(f"An error occurred during analysis: {e}")
                             st.write("Please try uploading a valid image file.")
