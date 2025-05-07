@@ -26,17 +26,62 @@ model_zip_path = os.path.join(os.path.dirname(__file__), model_zip_filename)
 extracted_model_dir = "extracted_spacy_model"
 model_extract_path = os.path.join(os.path.dirname(__file__), extracted_model_dir)
 
-meta_json_path = os.path.join(model_extract_path, "meta.json") # Assuming files are directly in the zip
+# --- IMPORTANT CHANGE HERE ---
+# The actual path to load the model from is the extraction directory itself,
+# assuming the zip contains the model files at its root.
+actual_model_path = model_extract_path
+# --- END IMPORTANT CHANGE ---
 
+# Check if a key file exists in the actual model directory (e.g., meta.json)
+# This is the best way to check if the model has been successfully extracted
+meta_json_path = os.path.join(actual_model_path, "meta.json")
+
+# Use st.cache_resource to cache the model loading
+@st.cache_resource
+def load_spacy_model(model_path):
+    """Loads the Spacy model."""
+    st.info(f"Attempting to load Spacy model from: {model_path}")
+    try:
+        return spacy.load(model_path)
+    except OSError as e:
+        st.error(f"Error loading Spacy model from: {model_path}. Make sure the directory exists and contains the necessary Spacy model files (like meta.json).")
+        st.error(f"Original error: {type(e).__name__} - {e}") # Show the original OS error
+
+        # Debugging: List contents of the actual model directory
+        if os.path.exists(model_path):
+             try:
+                st.error(f"Contents of the actual model directory ({model_path}): {os.listdir(model_path)}")
+             except NotADirectoryError:
+                 st.error(f"{model_path} exists but is not a directory.")
+             except Exception as list_error:
+                 st.error(f"Error listing contents of {model_path}: {type(list_error).__name__} - {list_error}")
+        else:
+             st.error(f"Actual model directory not found: {model_path}")
+
+        st.stop() # Stop the app if the model can't be loaded
+    except Exception as e:
+        st.error(f"An unexpected error occurred during model loading: {type(e).__name__} - {e}")
+        st.stop()
+
+
+# --- Extraction Logic ---
+# Check for the existence of a key file (meta.json) in the expected load path
 if not os.path.exists(meta_json_path):
-    st.info(f"Extracting Spacy model to {extracted_model_dir}...")
+    st.info(f"Spacy model not found in {actual_model_path}. Extracting to {model_extract_path}...")
     try:
         # Create the target directory if it doesn't exist
         os.makedirs(model_extract_path, exist_ok=True)
         with zipfile.ZipFile(model_zip_path, 'r') as zip_ref:
-            # Extract into the dedicated subdirectory
+            # Extract directly into the dedicated subdirectory
             zip_ref.extractall(model_extract_path)
         st.success("Spacy model extracted successfully!")
+
+        # Re-check for meta.json after extraction
+        if not os.path.exists(meta_json_path):
+             st.error(f"Extraction completed, but meta.json was not found at {meta_json_path}. This indicates the zip structure might be different than expected.")
+             st.error(f"Contents of extraction directory ({model_extract_path}): {os.listdir(model_extract_path)}")
+             st.stop() # Stop if extraction didn't result in the expected structure
+
     except FileNotFoundError:
         st.error(f"Error: Spacy model zip file not found at {model_zip_path}. Make sure it's in your GitHub repository.")
         st.stop()
@@ -46,29 +91,8 @@ if not os.path.exists(meta_json_path):
     except Exception as e:
         st.error(f"An unexpected error occurred during extraction: {type(e).__name__} - {e}")
         st.stop()
-
-try:
-    # Define the actual path to the model directory inside the extracted directory
-    actual_model_path = os.path.join(model_extract_path, "en_core_web_sm")
-    nlp = spacy.load(actual_model_path)
-    st.success("Spacy model loaded successfully!") # Add a success message
-except OSError:
-    st.error(f"Error loading Spacy model from: {actual_model_path}. Make sure the model was extracted correctly and contains the necessary files.")
-    # Debugging: List contents of the actual model directory
-    try:
-        contents = os.listdir(actual_model_path)
-        st.error(f"Contents of {actual_model_path}: {contents}")
-    except NotADirectoryError:
-        st.error(f"{actual_model_path} exists but is not a directory.")
-    except FileNotFoundError:
-        st.error(f"{actual_model_path} does not exist.")
-    except Exception as e:
-        st.error(f"Error listing {actual_model_path}: {type(e).__name__} - {e}")
-    except FileNotFoundError:
-         st.error(f"Actual model directory not found: {actual_model_path}")
-    st.stop()
-
-
+else:
+    st.info(f"Spacy model found at {actual_model_path}. Skipping extraction.")
 
 # --- Medical Knowledge Base for Chatbot ---
 symptoms_list = [
