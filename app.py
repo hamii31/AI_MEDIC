@@ -96,7 +96,7 @@ def predict_pneumonia(uploaded_file):
 
 # Streamlit app code
 def main():
-    main_choice = st.sidebar.selectbox("Select a category:", ["Home", "Endocrinologist", "Pulmonologist"])
+    main_choice = st.sidebar.selectbox("Select a category:", ["Home", "Endocrinologist", "Radiologist"])
 
     if main_choice == "Home":
         st.header("Welcome to AI Physician!")
