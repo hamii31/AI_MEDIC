@@ -17,11 +17,37 @@ except Exception as e:
     st.error(f"An error occurred while loading a model: {e}")
     st.stop()
  
-nlp = None
+# Define the paths relative to the script location
+# Assuming the zip file is named en_core_web_sm.zip and is in the same directory
+model_zip_filename = "en_core_web_sm.zip"
+model_zip_path = os.path.join(os.path.dirname(__file__), model_zip_filename)
+
+# The directory name after unzipping (it will be created in the same directory)
+model_extract_dir_name = "en_core_web_sm"
+model_extract_path = os.path.join(os.path.dirname(__file__), model_extract_dir_name)
+
+# Check if the model directory exists
+if not os.path.exists(model_extract_path):
+    st.info("Extracting Spacy model...")
+    try:
+        with zipfile.ZipFile(model_zip_path, 'r') as zip_ref:
+            # Extract to the directory where the script is located
+            zip_ref.extractall(os.path.dirname(__file__))
+        st.success("Spacy model extracted successfully!")
+    except FileNotFoundError:
+        st.error(f"Error: Spacy model zip file not found at {model_zip_path}")
+        st.stop() # Stop the app if the zip file is not found
+    except Exception as e:
+        st.error(f"Error extracting Spacy model: {e}")
+        st.stop() # Stop the app if extraction fails
+
+# Load the model from the extracted path
 try:
-    nlp = spacy.load("en_core_web_sm")
+    nlp = spacy.load(model_extract_path)
 except OSError:
-    print("Model 'en_core_web_sm' not found. Please download it first.")
+    st.error(f"Error loading Spacy model from: {model_extract_path}. Make sure the model was extracted correctly.")
+    st.stop() # Stop the app execution if the model can't be loaded
+
 
 # --- Medical Knowledge Base for Chatbot ---
 symptoms_list = [
