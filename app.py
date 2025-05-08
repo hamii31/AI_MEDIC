@@ -89,8 +89,8 @@ def main():
     if main_choice == "General AI":
         st.header("Welcome to AIMAIC - AI for Medical Analysis and Image Classification")
         st.warning("""
-        Disclaimer: This chatbot is for informational purposes only and is NOT a substitute for professional medical advice, diagnosis, or treatment. Its also under construction, so the predictions might not be as accurate or may not even be processed.
-        It provides basic information based on common symptoms and generalized lab ranges.
+        Disclaimer: This chatbot is for informational purposes only and is NOT a substitute for professional medical advice, diagnosis, or treatment. It is also under construction, so the predictions might not be as accurate or may not even be processed.
+        The model provides basic information based on common symptoms and generalized lab ranges.
         **Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition or the interpretation of your lab results.**
         If you are experiencing a medical emergency, call your local emergency number immediately.
         """)
