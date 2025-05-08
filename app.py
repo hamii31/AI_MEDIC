@@ -42,7 +42,7 @@ symptom_condition_mapping = {
     "shortness of breath": ["asthma", "pneumonia", "anxiety"],
     "chest pain": ["heart attack (seek immediate medical help!)", "anxiety", "muscle strain"],
     "increased thirst": ["diabetes"],
-    "frequent urination": ["diabetes"],
+    "frequest urination": ["diabetes"],
     "unexplained weight loss": ["diabetes", "hyperthyroidism"],
     "blurred vision": ["diabetes"],
     "weight gain": ["hypothyroidism", "PCOS"],
@@ -160,8 +160,8 @@ def main():
             # Generate response
             response_parts = []
 
-            # Add Hugging Face sentiment
-            response_parts.append(f"Hugging Face sentiment: **{label}** (confidence: {score:.2f})")
+            # Only include confidence score
+            response_parts.append(f"Confidence: {score:.2f}")
 
             # Symptoms
             if extracted_symptoms:
