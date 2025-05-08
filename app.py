@@ -287,12 +287,12 @@ def main():
     if main_choice == "General AI":
         st.header("Welcome to AIMAIC - AI for Medical Analysis and Image Classification")
         st.warning("""
-        Disclaimer: This chatbot focuses mostly on thyroid problems, diabetes and PCOS. More diseases will be added in the future.    .
+        Disclaimer: This chatbot focuses mostly on thyroid problems, diabetes and PCOS. More diseases will be added in the future.    
         **Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition or the interpretation of your lab results.**
         If you are experiencing a medical emergency, call your local emergency number immediately.
         """)
 
-        st.warning("Usage: Before starting the chat, please select your gender for more accurate results. Describe your symptoms or provide lab results, including the proper units, or use the sidebar to access specific models for image analysis.")
+        st.warning("Usage: Before starting the chat, please select your gender from the sidebar for more accurate results. Describe your symptoms or provide lab results, including the proper units, or use the sidebar to access specific models for image analysis.")
 
         # Select user gender
         user_gender = st.sidebar.selectbox("Select your gender:", ["male", "female"])
