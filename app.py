@@ -37,7 +37,7 @@ symptoms_list = [
 symptom_condition_mapping = {
     "fever": ["flu", "common cold", "infection"],
     "cough": ["flu", "common cold", "bronchitis"],
-    "sore throat": ["common cold", "strep throat"],
+    "sore throat": ["common cold", "strep throat", "sore throat"],
     "headache": ["tension headache", "migraine", "flu"],
     "shortness of breath": ["asthma", "pneumonia", "anxiety"],
     "chest pain": ["heart attack (seek immediate medical help!)", "anxiety", "muscle strain"],
