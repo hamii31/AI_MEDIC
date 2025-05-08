@@ -436,7 +436,7 @@ def main():
 
                     # Generate message
                     response_parts.append(
-                        f"- Your **{test_name.capitalize()}** is **{value} {unit}**, which is **{interpretation}** for a general range. This test is relevant to **{test_info.get('condition', 'N/A')}**."
+                        f"- Your **{test_name.capitalize()}** is **{value} {unit}**, which is **{interpretation}** for a general range. Additional info: **{test_info.get('condition', 'N/A')}**."
                     )
 
                 response_parts.append("\n**Important Note on Lab Results:**")
