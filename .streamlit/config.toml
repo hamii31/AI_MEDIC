@@ -1,2 +1,0 @@
-[server]
-folderWatchBlacklist = ["/home/adminuser/venv/lib/python3.12/site-packages/spacy/data", "venv", ".git"]
