@@ -110,7 +110,7 @@ def main():
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
-        user_input = st.chat_input("Describe your symptoms or provide lab results (e.g., 'I have a fever and cough', 'my fasting glucose is 110 mg/dL', 'TSH 5.5')")
+        user_input = st.chat_input("Start chat (e.g., 'I have a fever and cough', 'my fasting glucose is 110 mg/dL', 'TSH 5.5')")
 
         if user_input:
             # Add user message
