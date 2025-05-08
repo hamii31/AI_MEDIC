@@ -1,5 +1,6 @@
 streamlit
 numpy
 tensorflow
+tf-keras
 Pillow
 transformers
