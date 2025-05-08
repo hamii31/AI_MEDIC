@@ -87,7 +87,7 @@ def main():
     main_choice = st.sidebar.selectbox("Select a category:", ["General AI", "Radiologist"])
 
     if main_choice == "General AI":
-        st.header("Welcome to the AI Physician! (Informational)")
+        st.header("Welcome to AIMAIC - AI for Medical Analysis and Image Classification")
         st.warning("""
         Disclaimer: This chatbot is for informational purposes only and is NOT a substitute for professional medical advice, diagnosis, or treatment.
         It provides basic information based on common symptoms and generalized lab ranges.
