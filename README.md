@@ -4,7 +4,7 @@
 
 AIMAIC is an interactive web application built with Streamlit that provides medical insights through two main functionalities:
 
-- **General AI (NLP Module):** An NLP-based medical chatbot that extracts symptoms and lab results from user text, interprets medical values against reference ranges, and provides health insights with disclaimers.
+- **NLP Module:** An NLP-based medical chatbot that extracts symptoms and lab results from user text, interprets medical values against reference ranges, and provides health insights with disclaimers.
 - **Radiologist Module:** Upload chest X-ray images to receive pneumonia predictions based on a machine learning model.
 
 **Note:** This tool is for informational purposes only and does not replace professional medical advice, diagnosis, or treatment.
