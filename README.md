@@ -40,10 +40,14 @@ Additional Notes
 Getting Started
 Installation
 
+```
 git clone <repository-url>
 cd AIMAIC
-pip install -r requirements.txt
+pip install -r requirements.txt`
+```
 
 Running the App
 
+```
 streamlit run app.py
+```
