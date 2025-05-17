@@ -1,37 +1,49 @@
-# AIMAIC - AI for Medical Analysis and Image Classification
-
-## Overview
+AIMAIC - AI for Medical Analysis and Image Classification
+Overview
 
 AIMAIC is an interactive web application built with Streamlit that provides medical insights through two main functionalities:
 
-- **NLP Module:** An NLP-based medical chatbot that extracts symptoms and lab results from user text, interprets medical values against reference ranges, and provides health insights with disclaimers.
-- **Radiologist Module:** Upload chest X-ray images to receive pneumonia predictions based on a machine learning model.
+    NLP Module: An intelligent medical chatbot that extracts symptoms and lab results from user input text, interprets medical values against reference ranges, and offers health insights with appropriate disclaimers.
 
-**Note:** This tool is for informational purposes only and does not replace professional medical advice, diagnosis, or treatment.
+    Radiologist Module: Allows users to upload chest X-ray images to receive pneumonia predictions based on a lightweight, optimized convolutional neural network model.
 
----
+    Disclaimer: This tool is for informational purposes only and does not replace professional medical advice, diagnosis, or treatment.
 
-## Features
-Natural language processing for symptom and lab result extraction and analysis
-Basic confidence scoring (sentiment-like) for user inputs
-Symptom-to-condition mapping and lab result interpretation based on reference ranges
-Upload and analyze chest X-ray images for pneumonia detection
-Interactive chat interface for seamless user communication
+Features
 
----
+    Natural language processing for symptom and lab result extraction and analysis.
 
-## Technologies Used
+    Basic confidence scoring (similar to sentiment analysis) for user inputs.
 
-- **Streamlit**: For building the web interface
-- **TensorFlow**: Loading and running the pneumonia detection model
-- **NumPy & Keras**: Image preprocessing
-- **Python**: Core programming language
+    Symptom-to-condition mapping and lab result interpretation based on medical reference ranges.
 
----
+    Upload and analyze chest X-ray images to detect pneumonia.
 
-## Additional Notes
+    Interactive chat interface for seamless communication and health insight delivery.
 
-- **Pneumonia CNN Model**: The original convolutional neural network achieved high accuracy but was too large for practical deployment. To address this, I developed a lightweight version of the model. Initially, the performance of the lightweight model was poor, but I optimized it using techniques such as learning rate scheduling, model checkpointing, weight reuse, architectural adjustments (e.g., adding deeper layers), and batch training. These improvements brought the lightweight model's performance close to that of the original.
+Technologies Used
 
-- **NLP Module**: I integrated this component to overcome limitations in my earlier tabular models for disease prediction (e.g., Diabetes, Hypo-/Hyperthyroidism, and PCOS). These models relied heavily on structured lab data, which users might not always have. To address this gap, I introduced a Natural Language Processing module that maps free-text symptom and lab report descriptions to likely diagnoses, improving accessibility and model utility.
- 
+    Streamlit – Web interface framework for rapid app development.
+
+    TensorFlow – Loading and running the pneumonia detection model.
+
+    NumPy & Keras – Image preprocessing and model development.
+
+    Python – Core programming language.
+
+Additional Notes
+
+    Pneumonia CNN Model: The original CNN model delivered high accuracy but was too large for practical deployment. To address this, a lightweight version was developed and optimized using learning rate scheduling, model checkpointing, weight reuse, architectural tweaks (including deeper layers), and batch training—resulting in comparable performance to the original.
+
+    NLP Module: Designed to overcome limitations in earlier tabular disease prediction models dependent on structured lab data (e.g., for Diabetes, Thyroid disorders, and PCOS). This module uses free-text input to map symptoms and lab reports to likely diagnoses, making the tool more accessible and useful when structured data is unavailable.
+
+Getting Started
+Installation
+
+git clone <repository-url>
+cd AIMAIC
+pip install -r requirements.txt
+
+Running the App
+
+streamlit run app.py
