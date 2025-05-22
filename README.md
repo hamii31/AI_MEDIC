@@ -44,7 +44,7 @@ Pneumonia CNN Classification Report
 | Macro Avg | 0.95      | 0.94   | 0.95     | 1248    |
 | Weighted Avg | 0.95   | 0.95   | 0.95     | 1248    |
 
-Classification Report Summary
+**Classification Report Summary**
 The classification report clearly demonstrates the strong capability of this convolutional neural network to accurately distinguish between normal and opacity cases in medical imaging. With an overall accuracy of 95%, high precision (95-96%), and excellent recall (91-97%), the model shows promising reliability and robustness suitable for clinical applications.
 
 Importantly, the high recall for the opacity class (0.97) indicates the model’s effectiveness at correctly identifying potential disease cases, minimizing the risk of missed diagnoses. This performance makes it a valuable tool for aiding medical professionals in diagnostic workflows.
