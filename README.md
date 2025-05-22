@@ -8,7 +8,7 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
 
     Disclaimer: This tool is for informational purposes only and does not replace professional medical advice, diagnosis, or treatment.
 
-Features
+## Features
 
     Natural language processing for symptom and lab result extraction and analysis.
 
@@ -20,7 +20,7 @@ Features
 
     Interactive chat interface for seamless communication and health insight delivery.
 
-Technologies Used
+## Technologies Used
 
     Streamlit – Web interface framework for rapid app development.
 
@@ -51,8 +51,7 @@ Importantly, the high recall for the opacity class (0.97) indicates the model’
 
 **NLP Module: Designed to overcome limitations in earlier tabular disease prediction models dependent on structured lab data (e.g., for Diabetes, Thyroid disorders, and PCOS). This module uses free-text input to map symptoms and lab reports to likely diagnoses, making the tool more accessible and useful when structured data is unavailable.**
 
-Getting Started
-Installation
+## Installation
 
 ```
 git clone <repository-url>
@@ -60,7 +59,7 @@ cd AIMAIC
 pip install -r requirements.txt`
 ```
 
-Running the App
+## Running the App
 
 ```
 streamlit run app.py
