@@ -58,21 +58,21 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
 
 - **Mammography CNN Model: The model shares the same architecture as the Pneumonia CNN Model.**
 
-**Mammography CNN Classification Report**
-
-| Class     | Precision | Recall | F1-Score | Support |
-|-----------|-----------|--------|----------|---------|
-| Benign Masses    | 0.95      | 0.92   | 0.93     | 1087     |
-| Malignant Masses   | 0.94      | 0.96   | 0.95     | 1371     |
-| **Accuracy** |        |        | **0.94** | 2458    |
-| Macro Avg | 0.94      | 0.94   | 0.94     | 2458    |
-| Weighted Avg | 0.94   | 0.94   | 0.94     | 2458    |
-
-**Classification Report Summary**
-
-The classification report highlights the excellent performance of this convolutional neural network in differentiating between benign and malignant breast masses. Achieving an overall accuracy of 94%, the model demonstrates high precision (94–95%) and strong recall (92–96%) across both classes, indicating reliable predictive capability in a clinical diagnostic setting.
-
-Notably, the high recall of 0.96 for malignant masses reflects the model's effectiveness in correctly identifying cases of potential concern. This minimizes the risk of false negatives, which is critical in early detection and treatment planning for breast cancer. With balanced performance across both classes, the model is well-suited for deployment in decision support tools aimed at assisting radiologists in breast cancer screening.
+    **Mammography CNN Classification Report**
+    
+    | Class     | Precision | Recall | F1-Score | Support |
+    |-----------|-----------|--------|----------|---------|
+    | Benign Masses    | 0.95      | 0.92   | 0.93     | 1087     |
+    | Malignant Masses   | 0.94      | 0.96   | 0.95     | 1371     |
+    | **Accuracy** |        |        | **0.94** | 2458    |
+    | Macro Avg | 0.94      | 0.94   | 0.94     | 2458    |
+    | Weighted Avg | 0.94   | 0.94   | 0.94     | 2458    |
+    
+    **Classification Report Summary**
+    
+    The classification report highlights the excellent performance of this convolutional neural network in differentiating between benign and malignant breast masses. Achieving an overall accuracy of 94%, the model demonstrates high precision (94–95%) and strong recall (92–96%) across both classes, indicating reliable predictive capability in a clinical diagnostic setting.
+    
+    Notably, the high recall of 0.96 for malignant masses reflects the model's effectiveness in correctly identifying cases of potential concern. This minimizes the risk of false negatives, which is critical in early detection and treatment planning for breast cancer. With balanced performance across both classes, the model is well-suited for deployment in decision support tools aimed at assisting radiologists in breast cancer screening.
 
 - **NLP Module: Designed to overcome limitations in earlier tabular disease prediction models dependent on structured lab data (e.g., for Diabetes, Thyroid disorders, and PCOS). This module uses free-text input to map symptoms and lab reports to likely diagnoses, making the tool more accessible and useful when structured data is unavailable. Then decideswhich diagnose best matches the provided symtpoms and displays it as the more likely diagnose. If there's a recommendation for that top diagnosis, it will be provided.**
 
