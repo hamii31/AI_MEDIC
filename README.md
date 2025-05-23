@@ -56,7 +56,7 @@ The classification report clearly demonstrates the strong capability of this con
 
 Importantly, the high recall for the opacity class (0.97) indicates the model’s effectiveness at correctly identifying potential disease cases, minimizing the risk of missed diagnoses.
 
-- **Mammography CNN Model: Same architecture as the Pneumonia CNN Model.
+- **Mammography CNN Model: The model shares the same architecture as the Pneumonia CNN Model.**
 
 **Mammography CNN Classification Report**
 
