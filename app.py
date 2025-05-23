@@ -7,15 +7,16 @@ import re
 
 # Paths and filenames
 PNEUMONIA_MODEL_FILENAME = r"lightweight_pneumonia_cnn_512.keras"
-
-# Load the pneumonia detection model
+MAMMOGRAPHY_MODEL_FILENAME = r"lightweight_mammography_cnn_512.keras"
+# Load the CNNs
 try:
     pneumonia_model = tf.keras.models.load_model(PNEUMONIA_MODEL_FILENAME)
+    mammography_model = tf.keras.models.load_model(MAMMOGRAPHY_MODEL_FILENAME)  # Placeholder for breast cancer model
 except FileNotFoundError as e:
-    st.error(f"Error loading pneumonia model: {e}. Make sure the model exists at {PNEUMONIA_MODEL_FILENAME}.")
+    st.error(f"Error loading one or multiple models:")
     st.stop()
 except Exception as e:
-    st.error(f"Error loading pneumonia model: {e}")
+    st.error(f"Error loading a model: {e}")
     st.stop()
 
 
@@ -33,6 +34,19 @@ def predict_pneumonia(uploaded_file):
     confidence = pred_prob if predicted_class_index == 1 else (1 - pred_prob)
     return predicted_label, confidence
 
+def predict_breast_cancer(uploaded_file):
+    img_size = (224, 224)
+    img = image.load_img(uploaded_file, target_size=img_size)
+    img_array = image.img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+
+    pred_prob = mammography_model.predict(img_array)[0][0]
+    predicted_class_index = (pred_prob > 0.5).astype(int)
+
+    class_labels = ['Benign', 'Malignant']
+    predicted_label = class_labels[predicted_class_index]
+    confidence = pred_prob if predicted_class_index == 1 else (1 - pred_prob)
+    return predicted_label, confidence
 
 # Helper function: get_lab_test_details
 def get_lab_test_details(test_name, value, lab_tests_dict=None):
@@ -216,12 +230,12 @@ def main():
 
     elif main_choice == "Radiologist":
         st.header("Radiologist: Image Analysis")
-        model_type = st.selectbox("Choose the analysis type:", ["Pneumonia X-ray Analysis"])
+        model_type = st.sidebar.selectbox("Choose the analysis type:", ["Pneumonia X-ray Analysis", "Breast Cancer X-ray Analysis"])
 
         if model_type == "Pneumonia X-ray Analysis":
             st.subheader("Pneumonia X-ray Analysis")
             st.write("Upload a chest X-ray image to get a prediction for pneumonia.")
-            uploaded_file = st.file_uploader("Choose a chest X-ray image...", type=["jpg", "jpeg", "png"])
+            uploaded_file = st.file_uploader("Choose a X-ray image...", type=["jpg", "jpeg", "png"])
 
             if uploaded_file:
                 st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
@@ -238,7 +252,26 @@ def main():
                         except Exception as e:
                             st.error(f"Error during analysis: {e}")
                             st.write("Please try uploading a valid image file.")
+        elif model_type == "Breast Cancer X-ray Analysis":
+            st.subheader("Breast X-ray Analysis")
+            st.write("Upload a breast X-ray image to get a prediction for breast cancer. Note: This model is still undergoing development.")
+            uploaded_file = st.file_uploader("Choose a X-ray image...", type=["jpg", "jpeg", "png"])
 
-# Run the app
+            if uploaded_file:
+                st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+                if st.button("Analyze X-ray"):
+                    with st.spinner("Analyzing image... Please wait."):
+                        try:
+                            predicted_label, confidence = predict_breast_cancer(uploaded_file)
+                            if predicted_label == 'Malignant':
+                                st.markdown(f"<h3 style='color: red;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
+                            else:
+                                st.markdown(f"<h3 style='color: green;'>Prediction: {predicted_label}</h3>", unsafe_allow_html=True)
+                            st.write(f"Confidence: {confidence * 100:.2f}%")
+                            st.write("Note: This analysis is based on a machine learning model and should not replace a diagnosis from a qualified medical professional.")
+                        except Exception as e:
+                            st.error(f"Error during analysis: {e}")
+                            st.write("Please try uploading a valid image file.")
+
 if __name__ == "__main__":
     main()
