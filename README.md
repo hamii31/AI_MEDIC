@@ -38,7 +38,7 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
 
 ## Additional Notes
 
-- **Pneumonia CNN Model: The original CNN model delivered high accuracy but was too large for practical deployment. To address this, a lightweight version was developed and optimized using learning rate scheduling, model checkpointing, weight reuse, architectural tweaks (including deeper layers), and batch training—resulting in comparable performance to the original.**
+- **Pneumonia CNN Model: The original CNN model delivered high accuracy but was too large for practical deployment. To address this, a lightweight version was developed and optimized using learning rate scheduling, model checkpointing, weight reuse, architectural tweaks (including deeper layers), and batch training—resulting in comparable performance to the original. The resulting model outperforms its heavier version, while being 28 times lighter.**
 
     **Pneumonia CNN Classification Report**
     
