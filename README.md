@@ -63,7 +63,7 @@ Importantly, the high recall for the opacity class (0.97) indicates the model’
 
 ## Sources
 
-- **All datasets, image data, recommendations, and diagnoses used in this project are obtained from verified and reputable sources to ensure accuracy, reliability, and validity. These sources have been thoroughly vetted and are recognized within the relevant scientific and medical communities. The Pneumonia Dataset is from Kaggle and has been evaluated by three experts. The Mammography Dataset is a dataset cluster from 3 additional datasets - INbreast Dataset, MIAS Dataset and DDSM Dataset. I'm building the `disease_db.py` using BioPortal - created by Stanford Center for Biomedical Informatics Research**
+- **All datasets, image data, recommendations, and diagnoses used in this project are obtained from verified and reputable sources to ensure accuracy, reliability, and validity. These sources have been thoroughly vetted and are recognized within the relevant scientific and medical communities. The Pneumonia Dataset is from [Mendeley Data](https://data.mendeley.com/datasets/rscbjbr9sj/2) and has been evaluated by three experts. The Mammography Dataset is a dataset cluster created from three datasets - [INbreast Dataset](https://paperswithcode.com/dataset/inbreast), [MIAS Dataset](https://www.kaggle.com/datasets/kmader/mias-mammography) and [DDSM Dataset](http://www.eng.usf.edu/cvprg/Mammography/Database.html). I'm building the `disease_db.py` using BioPortal - created by Stanford Center for Biomedical Informatics Research**
 
 
 
