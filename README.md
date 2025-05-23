@@ -40,21 +40,21 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
 
 - **Pneumonia CNN Model: The original CNN model delivered high accuracy but was too large for practical deployment. To address this, a lightweight version was developed and optimized using learning rate scheduling, model checkpointing, weight reuse, architectural tweaks (including deeper layers), and batch training—resulting in comparable performance to the original.**
 
-**Pneumonia CNN Classification Report**
-
-| Class     | Precision | Recall | F1-Score | Support |
-|-----------|-----------|--------|----------|---------|
-| Normal    | 0.95      | 0.92   | 0.94     | 468     |
-| Opacity   | 0.95      | 0.97   | 0.96     | 780     |
-| **Accuracy** |        |        | **0.95** | 1248    |
-| Macro Avg | 0.95      | 0.95   | 0.95     | 1248    |
-| Weighted Avg | 0.95   | 0.95   | 0.95     | 1248    |
-
-**Classification Report Summary**
-
-The classification report clearly demonstrates the strong capability of this convolutional neural network to accurately distinguish between normal and opacity cases in medical imaging. With an overall accuracy of 95%, high precision (95-96%), and excellent recall (91-97%), the model shows promising reliability suitable for clinical applications.
-
-Importantly, the high recall for the opacity class (0.97) indicates the model’s effectiveness at correctly identifying potential disease cases, minimizing the risk of missed diagnoses.
+    **Pneumonia CNN Classification Report**
+    
+    | Class     | Precision | Recall | F1-Score | Support |
+    |-----------|-----------|--------|----------|---------|
+    | Normal    | 0.95      | 0.92   | 0.94     | 468     |
+    | Opacity   | 0.95      | 0.97   | 0.96     | 780     |
+    | **Accuracy** |        |        | **0.95** | 1248    |
+    | Macro Avg | 0.95      | 0.95   | 0.95     | 1248    |
+    | Weighted Avg | 0.95   | 0.95   | 0.95     | 1248    |
+    
+    **Classification Report Summary**
+    
+    The classification report clearly demonstrates the strong capability of this convolutional neural network to accurately distinguish between normal and opacity cases in medical imaging. With an overall accuracy of 95%, high precision (95-96%), and excellent recall (91-97%), the model shows promising reliability suitable for clinical applications.
+    
+    Importantly, the high recall for the opacity class (0.97) indicates the model’s effectiveness at correctly identifying potential disease cases, minimizing the risk of missed diagnoses.
 
 - **Mammography CNN Model: The model shares the same architecture as the Pneumonia CNN Model.**
 
