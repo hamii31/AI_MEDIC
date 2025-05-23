@@ -81,9 +81,9 @@ for test_name, test_info in lab_tests.items():
 # Main app function
 def main():
     st.sidebar.title("Navigation")
-    main_choice = st.sidebar.selectbox("Select a category:", ["General AI", "Radiologist"])
+    main_choice = st.sidebar.selectbox("Select a category:", ["Medical Chatbot", "Radiologist"])
 
-    if main_choice == "General AI":
+    if main_choice == "Medical Chatbot":
         st.header("Welcome to AIMAIC - AI for Medical Analysis and Image Classification")
         st.warning("""
         Disclaimer: This chatbot focuses mostly on thyroid problems, diabetes and PCOS. More diseases will be added in the future.    .
