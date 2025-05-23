@@ -40,7 +40,7 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
 
 - **Pneumonia CNN Model: The original CNN model delivered high accuracy but was too large for practical deployment. To address this, a lightweight version was developed and optimized using learning rate scheduling, model checkpointing, weight reuse, architectural tweaks (including deeper layers), and batch training—resulting in comparable performance to the original.**
 
-Pneumonia CNN Classification Report
+**Pneumonia CNN Classification Report**
 
 | Class     | Precision | Recall | F1-Score | Support |
 |-----------|-----------|--------|----------|---------|
@@ -56,7 +56,23 @@ The classification report clearly demonstrates the strong capability of this con
 
 Importantly, the high recall for the opacity class (0.97) indicates the model’s effectiveness at correctly identifying potential disease cases, minimizing the risk of missed diagnoses.
 
-- **Mammography CNN Model: 
+- **Mammography CNN Model: Same architecture as the Pneumonia CNN Model.
+
+**Mammography CNN Classification Report**
+
+| Class     | Precision | Recall | F1-Score | Support |
+|-----------|-----------|--------|----------|---------|
+| Benign Masses    | 0.95      | 0.92   | 0.93     | 1087     |
+| Malignant Masses   | 0.94      | 0.96   | 0.95     | 1371     |
+| **Accuracy** |        |        | **0.94** | 2458    |
+| Macro Avg | 0.94      | 0.94   | 0.94     | 2458    |
+| Weighted Avg | 0.94   | 0.94   | 0.94     | 2458    |
+
+**Classification Report Summary**
+
+The classification report highlights the excellent performance of this convolutional neural network in differentiating between benign and malignant breast masses. Achieving an overall accuracy of 94%, the model demonstrates high precision (94–95%) and strong recall (92–96%) across both classes, indicating reliable predictive capability in a clinical diagnostic setting.
+
+Notably, the high recall of 0.96 for malignant masses reflects the model's effectiveness in correctly identifying cases of potential concern. This minimizes the risk of false negatives, which is critical in early detection and treatment planning for breast cancer. With balanced performance across both classes, the model is well-suited for deployment in decision support tools aimed at assisting radiologists in breast cancer screening.
 
 - **NLP Module: Designed to overcome limitations in earlier tabular disease prediction models dependent on structured lab data (e.g., for Diabetes, Thyroid disorders, and PCOS). This module uses free-text input to map symptoms and lab reports to likely diagnoses, making the tool more accessible and useful when structured data is unavailable. Then decideswhich diagnose best matches the provided symtpoms and displays it as the more likely diagnose. If there's a recommendation for that top diagnosis, it will be provided.**
 
