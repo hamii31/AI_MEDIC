@@ -74,8 +74,8 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
     Notably, the high recall of 0.96 for malignant masses reflects the model's effectiveness in correctly identifying cases of potential concern. This minimizes the risk of false negatives, which is critical in early detection and treatment planning for breast cancer. With balanced performance across both classes, the model is well-suited for deployment in decision support tools aimed at assisting radiologists in breast cancer screening.
 
 - **RNN for NLP Model: Designed to overcome limitations in earlier tabular disease prediction models dependent on structured lab data (e.g., for Diabetes, Thyroid disorders, and PCOS). This RNN utilizes an Embedding layer that turns tokenized input into dense vectors. It is followed by two Bidirectional LSTM layers that process sequences both forwards and backwards. There are multiple Dropout layers to prevent overfitting (since the data, that the model is trained on, is not much). There is a FCL running a 'relu' activation, that connects with the final Dense Layer, which is running a 'softmax' activation.**
-- 
-| Class     | Precision | Recall | F1-Score | Support |
+
+    | Class     | Precision | Recall | F1-Score | Support |
     |-----------|-----------|--------|----------|---------|
     | Diabetes    | 0.65      | 0.70   | 0.67     | 60     |
     | Hyperthyroidism   | 0.82      | 0.74   | 0.78     | 87     |
