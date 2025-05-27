@@ -3,3 +3,4 @@ numpy
 tensorflow
 tf-keras
 Pillow
+scikit-learn
