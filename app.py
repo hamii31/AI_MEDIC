@@ -8,7 +8,7 @@ import pickle
 # Paths to models
 PNEUMONIA_MODEL_FILENAME = r"lightweight_pneumonia_cnn_512.keras"
 MAMMOGRAPHY_MODEL_FILENAME = r"lightweight_mammography_cnn_512.keras"
-RNN_MCL_C_MODEL_FILENAME = r"lightweight_rnn_model_v2.1.keras"
+RNN_MCL_C_MODEL_FILENAME = r"lightweight_rnn_model_v2_1.keras"
 RNN_TOKENIZER_FILENAME = r"tokenizer.pkl"          
 RNN_LABEL_ENCODER = r"label_encoder.pkl"
 # Load CNN models
