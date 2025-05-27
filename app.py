@@ -77,9 +77,9 @@ def main():
     if main_choice == "Medical Chatbot":
         st.header("Welcome to AIMAIC - AI for Medical Analysis and Image Classification")
         st.warning("""
-        Disclaimer: This chatbot currently uses a RNN that focuses on Hypo- and Hyperthyriodism, PCOS and Diabetes. More diseases will be added in the future.
-        **Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition or the interpretation of your lab results.**
-        If you are experiencing a medical emergency, call your local emergency number immediately.
+        Disclaimer: This chatbot currently uses a RNN that focuses on Hypo- and Hyperthyriodism, PCOS and Diabetes ONLY! More diseases will be added in the future.
+        **If you're experiencing symptoms that do not match the diseases, that this model was trained for, and it's an emergency, call your local medical emergency number immediately.**
+        **Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.**
         """)
 
         # Initialize chat history
