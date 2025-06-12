@@ -8,7 +8,7 @@ import pickle
 # Paths to models
 PNEUMONIA_MODEL_FILENAME = r"lightweight_pneumonia_cnn_512.keras"
 MAMMOGRAPHY_MODEL_FILENAME = r"lightweight_mammography_cnn_512.keras"
-RNN_MCL_C_MODEL_FILENAME = r"lightweight_rnn_model_v2_1.keras"
+RNN_MCL_C_MODEL_FILENAME = r"rnn_model_v2.2.keras"
 RNN_TOKENIZER_FILENAME = r"tokenizer.pkl"          
 RNN_LABEL_ENCODER = r"label_encoder.pkl"
 # Load CNN models
@@ -28,7 +28,7 @@ try:
     with open(RNN_LABEL_ENCODER, 'rb') as f:
         label_encoder = pickle.load(f)
         
-    class_labels = ['Hyperthyroidism', 'PCOS', 'Hypothyroidism', 'Diabetes']
+    class_labels = ['Hyperthyroidism', 'PCOS', 'Hypothyroidism', 'Diabetes', 'Endometriosis']
 except Exception as e:
     st.error(f"Error loading RNN model or tokenizer: {e}")
     st.stop()
@@ -36,14 +36,12 @@ except Exception as e:
 def predict_disease(text):
     seq = tokenizer.texts_to_sequences([text])
     pad_seq = pad_sequences(seq, maxlen=50, padding='post')
-    probs = rnn_model.predict(pad_seq, verbose=0)[0]  
+    probs = rnn_model.predict(pad_seq, verbose=0)[0]  # Softmax output: array of probabilities
 
+    # Map each class label to its probability
     class_probs = dict(zip(label_encoder.classes_, probs))
     
-    most_likely_class = max(class_probs, key=class_probs.get)
-    confidence = class_probs[most_likely_class]
-
-    return most_likely_class, confidence
+    return class_probs
 
 def predict_pneumonia(uploaded_file):
     img_size = (224, 224)
@@ -75,10 +73,11 @@ def main():
     main_choice = st.sidebar.selectbox("Select a category:", ["Medical Chatbot", "Radiologist"])
 
     if main_choice == "Medical Chatbot":
-        st.header("Welcome to AIMAIC - AI for Medical Analysis and Image Classification")
+        st.header("Welcome to AIMAIC (AI for Medical Analysis and Image Classification)")
+        st.warning(""" **How to use**: You desrcibe your symptoms in a casual way, such as "My pelvic hurts when I menstruate." or "My TSH is 25." and the chatbot will return the most likely condition(s) that matches the symptoms. """)
         st.warning("""
-        Disclaimer: This chatbot currently uses a RNN that focuses on Hypo- and Hyperthyriodism, PCOS and Diabetes ONLY! More diseases will be added in the future.
-        **If you're experiencing symptoms that do not match the diseases, that this model was trained for, and it's an emergency, call your local medical emergency number immediately.**
+        **Disclaimer**: This chatbot currently uses a RNN that focuses on endocrine and gynecological diseases. Current list of diseases: ***Polycystic Ovary Syndrome (PCOS), Endometriosis, Diabetes (Type 1 and Type 2), Hypothyroidism, Hyperthyroidism.***""")
+        st.error("""**If you're experiencing symptoms of an emergency, call your local medical emergency number immediately.**
         **Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.**
         """)
 
@@ -99,16 +98,22 @@ def main():
                 st.markdown(user_input)
 
             # Run prediction
-            predicted_class, confidence = predict_disease(user_input)
+            class_probs = predict_disease(user_input)
+            
+            likely_diagnoses = {cls: prob for cls, prob in class_probs.items() if prob > 0.40}
 
-            # Generate appropriate response
-            if predicted_class is None:
+            if not likely_diagnoses:
                 response = "I'm sorry, I couldn't identify the condition based on your symptoms. Could you please provide more details or consult a healthcare professional?"
             else:
-                response = (
-                    f"Prediction: **{predicted_class.capitalize()}** "
-                    f"Confidence: {(confidence*100):.2f}%."
-                )
+                response_lines = []
+                if len(likely_diagnoses) == 1:
+                    response_lines.append("Based on your symptoms, here is the most likely condition I can identify:\n\n")
+                else:
+                    response_lines.append("Based on your symptoms, here are the most likely conditions I can identify:\n\n")
+                for cls, prob in sorted(likely_diagnoses.items(), key=lambda x: x[1], reverse=True):
+                    response_lines.append(f"**{cls.capitalize()}** - Confidence: {prob * 100:.2f}%")
+    
+                response = "\n".join(response_lines)
 
             # Save and display bot response
             st.session_state.messages.append({"role": "assistant", "content": response})
