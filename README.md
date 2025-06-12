@@ -77,21 +77,22 @@ AIMAIC is an interactive web application built with Streamlit that provides medi
 
     | Class     | Precision | Recall | F1-Score | Support |
     |-----------|-----------|--------|----------|---------|
-    | Diabetes    | 0.65      | 0.70   | 0.67     | 60     |
-    | Hyperthyroidism   | 0.82      | 0.74   | 0.78     | 87     |
-    | Hypothyroidism   | 0.67      | 0.63   | 0.65     | 59     |
-    | PCOS   | 0.64      | 0.73   | 0.68     | 62    |
-    | **Accuracy** |        |        | **0.70** | 268    |
-    | Macro Avg | 0.70      | 0.70   | 0.69     | 268    |
-    | Weighted Avg | 0.71   | 0.70   | 0.70     | 268    |
+    | Diabetes    | 0.75      | 0.81   | 0.78     | 59     |
+    | Endometriosis   | 0.83      | 0.76   | 0.79     | 25     |
+    | Hyperthyroidism   | 0.79      | 0.79   | 0.79     | 87     |
+    | Hypothyroidism   | 0.63      | 0.58   | 0.60     | 59     |
+    | PCOS   | 0.63      | 0.65   | 0.64     | 63    |
+    | **Accuracy** |        |        | **0.72** | 293    |
+    | Macro Avg | 0.73      | 0.72   | 0.72     | 293    |
+    | Weighted Avg | 0.72   | 0.72   | 0.72     | 293    |
 
     **Classification Report Summary**
   
-    The classification report illustrates the performance of the model across multiple medical conditions, achieving an overall accuracy of 70%. The precision scores range from 0.64 to 0.82, indicating moderate to high correctness in positive predictions for each condition. Recall values between 0.63 and 0.74 suggest the model is reasonably effective at identifying actual cases, though there is room for improvement, particularly for hypothyroidism.
+    The classification report illustrates the performance of the model across multiple medical conditions, achieving an overall accuracy of 72%. The precision scores range from 0.63 to 0.83, indicating moderate to high correctness in positive predictions for each condition. Recall values between 0.58 and 0.81 suggest the model is reasonably effective at identifying actual cases, though there is room for improvement, particularly for hypothyroidism classification.
 
-    The F1-scores, which balance precision and recall, vary from 0.65 to 0.78, reflecting consistent but not exceptional performance across the different classes. The model demonstrates balanced performance with macro and weighted averages around 0.70, indicating relatively even classification capability among the conditions.
+    The F1-scores, which balance precision and recall, vary from 0.60 to 0.79, reflecting consistent but not exceptional performance across the different classes. The model demonstrates balanced performance with macro and weighted averages around 0.72, indicating relatively even classification capability among the conditions.
 
-    Overall, while the model shows promising results in distinguishing between various endocrine disorders, further refinement could enhance its sensitivity and specificity, making it more reliable for clinical decision support. This refinement would likely take form of an increase in the dataset volume, since as of now it's incredibly small.
+    Overall, while the model shows promising results in distinguishing between various endocrine disorders, further refinement could enhance its sensitivity and specificity, making it more reliable for clinical decision support. This refinement would likely take form of an increase in the dataset volume, since as of now it's reasonably small.
 
 
 ## Sources
